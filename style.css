@@ -1,0 +1,6 @@
+@font-face {
+    font-family: 'pixel';
+    src: url('http://chaipokoi.olympe.in/Dungeon-Walker/PIXELADE.TTF');
+}
+
+canvas{border: 1px solid black;}
