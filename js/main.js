@@ -1,9 +1,12 @@
-var Scene=new Game();
-var SoundEfx=new Sound(new Audio());
-var Input=new Input();
+var Scene;
+var SoundEfx;
+var Input;
 
 window.onload = function() {
 	surface = document.getElementById('canvas').getContext('2d');
+	Scene=new Game();
+	SoundEfx=new Sound(new Audio());
+	Input=new Input();
 	Interval=setInterval(function() {
 		Scene.update();
 	}, 20);

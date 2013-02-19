@@ -15,7 +15,7 @@ ________________________________________________________________________________
 The objective of the game is really simple.
 In fact, you just have to put the blocks to the shapes on background.
 For that you have 3 tools.
-You can push the blocks, you can eat them et finally, inflate them.
+You can push the blocks, you can eat them and finally, inflate them.
 When you eat a block, youre fat level increase.
 When you inflate a block, youre fat level decrease.
 To change your tool, you must press "B".
@@ -23,7 +23,7 @@ Sometimes, Monsters appear in the screen.
 There are three types of monsters.
 -The Hangrer, who eat the blocks.
 -The Fater, who inflate the Blocks.
--The Vices, who steal you a live when they hit you.
+-The Vices, who steal you a life when they hit you.
 With pressing "space" you can afraid the Vices.
 
 Where I can try it ?

@@ -16,6 +16,7 @@ function Wall(others,xTemp,yTemp)
 	this.flashing=false;
 	this.flashRate=Math.floor(Math.random()*10)+1;
 	this.flashFrame=255;
+	this.blocked=false;
 }
 
 /**
@@ -59,6 +60,9 @@ Wall.prototype.update=function(others)
 	else 
 		this.stop();
 		
+	if(this.x<76 || this.y<76 || this.x+this.width>800-76 || this.y+this.height>700-76)
+		this.blocked=true;
+		
 	this.velocity-=0.30;
 	if(this.velocity<0)
 		this.velocity=0;
@@ -66,8 +70,13 @@ Wall.prototype.update=function(others)
 	if(!this.validate)
 		v=0;
 	else
-		v=100;
-	surface.fillStyle="rgb("+(this.flashFrame-v)+","+(this.flashFrame+v)+","+(this.flashFrame-v)+")";
+		v=150;
+		
+	if(!this.blocked)
+		r=0;
+	else
+		r=150;
+	surface.fillStyle="rgb("+(this.flashFrame-v+r)+","+(this.flashFrame+v-r)+","+(this.flashFrame-v-r)+")";
 	surface.fillRect(this.x,this.y,this.width,this.height);
 }
 
@@ -84,6 +93,7 @@ Wall.prototype.box=function(others)
 			other=others[o];
 			if(other.x+other.width>this.x && other.x<this.x+this.width && other.y+other.height>this.y && other.y<this.y+this.height)
 			{
+				this.stop();
 				xtCenter=this.x+this.width/2;
 				ytCenter=this.y+this.height/2;
 				xoCenter=other.x+other.width/2;

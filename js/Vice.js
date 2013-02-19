@@ -54,7 +54,7 @@ Vice.prototype.update=function(others)
 		this.eye=255;
 		
 	if(this.eye>0)
-		this.eye-=1;
+		this.eye-=2;
 	
 	surface.fillStyle="rgb("+this.eye+",0,0)";
 	if(this.dir=="Left")

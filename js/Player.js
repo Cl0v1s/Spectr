@@ -79,7 +79,7 @@ Player.prototype.updatePos=function(others)
 	else
 		this.stop();
 		
-	this.halo.setPos(this.x+Math.round(75/2)-Math.round(450/2),this.y+Math.round(75/2)-Math.round(450/2));
+	this.halo.setPos(this.x+Math.round(75/2)-Math.round(450/2)-27,this.y+Math.round(75/2)-Math.round(450/2));
 }
 
 /**

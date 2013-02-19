@@ -1,3 +1,5 @@
+Sender=undefined;
+
 function Game()
 {
 	this.level=-1;
@@ -14,7 +16,19 @@ function Game()
 	this.frame=0;
 	this.paused=false;
 	this.sender=new XMLHttpRequest();
-
+	Sender=this.sender;
+	this.textSpeed=0.3;
+	
+	this.tutorialed=0;
+	this.tutorialStep=0;
+	this.tutorialFrame=0;
+	this.tutorialText=new Array();
+	this.tutorialText[0]=new Array();
+	//                       |                                  |                                  |                                  |                                  |                                  |                                  |
+	this.tutorialText[0][0]="Bon.. Et Bien je vais aller vite,  je n'ai pas que ça à faire...      Bref...                            Tu es mort.";
+	this.tutorialText[0][1]="Et tant qu'à faire,                le paradis existe...               Mais vois tu,                      je m'ennuie un peu moi...          Le jugement dernier...             Tout ça tout ça...";
+	this.tutorialText[0][2]="C'est drole que cinq minutes...    La compétition c'est plus sympa.   C'est pourquoi j'ai monté un petit jeu assez intéressant...           Et... Que tu sois joueur ou pas... Tu vas devoir y participer.";
+	this.tutorialText[0][2]="Les règles sont simples...         Il te suffit de pousser les blocs  d'énergie vitale...                Dans les emplacement qui           apparaissent dans les limbes.      Et ceci le plus rapidement         possible...";
 	
 	this.gameOverFire=new Image();
 	this.gameOverFire.src="graphics/fire.png";
@@ -23,8 +37,13 @@ function Game()
 	this.playerMode=new Image();
 	this.boxMode=new Image();
 	this.boxMode.src="graphics/littleBox.png";
+	this.boxInfo=new Image();
+	this.boxInfo.src="graphics/normalBox.png";
 	this.life=new Image();
 	this.life.src="graphics/life.png";
+	this.frontierFlashing=false;
+	this.frontierFlash=100;
+
 }
 
 /**
@@ -32,6 +51,7 @@ function Game()
  **/
 Game.prototype.update=function()
 {
+	SoundEfx.update();
 	if(this.paused)
 	{
 		this.pause();
@@ -40,21 +60,42 @@ Game.prototype.update=function()
 	
 	clean();
 	
-	if(this.stage.update(this.entities))
+	stageRes=this.stage.update(this.entities);
+	if(stageRes==true)
 	{
 		this.gameWin();
 		return;
 	}
-	
-	
-	if(!this.player.dead)
-		this.player.update(this.entities);
-	else
+	else if(stageRes=="Game Over")
 	{
-		this.gameOver();
+		clean();
+		this.gameOver("You have blocked too much blocks !");
 		return;
 	}
 	
+	if(!this.player.dead)
+	{
+		//frontier
+		if(this.frontierFlashing)
+		{
+			if(this.frontierFlash<100)
+				this.frontierFlash+=Math.floor(Math.random()*1.5)+1;
+			else
+				this.frontierFlashing=false;
+		}
+		else if(this.frontierFlash>0)
+			this.frontierFlash-=Math.floor(Math.random()*1.5)+1;
+		else
+			this.frontierFlashing=true;
+		surface.strokeStyle="rgb("+this.frontierFlash+",0,0)";
+		surface.strokeRect(76,76,800-76*2,700-76*2);
+		this.player.update(this.entities);
+	}
+	else
+	{
+		this.gameOver("You have lose all your lives !");
+		return;
+	}
 	
 	this.inputUpdate();
 	
@@ -72,7 +113,56 @@ Game.prototype.update=function()
 	}
 	
 	this.hudUpdate();
+	if(this.tutorialed != true)
+		this.tutorial();
+	
+	
 }
+
+/**
+ * Learn to the player how to play
+ **/
+Game.prototype.tutorial=function()
+{
+	surface.drawImage(this.boxInfo,400,0);
+	txt=new Array("","","","","","","","");
+	line=0;
+	this.tutorialFrame+=this.textSpeed;
+	if(this.tutorialFrame<=this.tutorialText[this.tutorialed][this.tutorialStep].length)
+		for(i=0;i<this.tutorialFrame;i++)
+		{
+			if(txt[line].length>=35)
+				line+=1;
+			txt[line]=txt[line]+this.tutorialText[this.tutorialed][this.tutorialStep].charAt(i);
+			if(Input.equals(13))
+				this.tutorialFrame=this.tutorialText[this.tutorialed][this.tutorialStep].length;
+		}
+	else
+	{
+		for(i=0;i<this.tutorialFrame;i++)
+		{
+			if(txt[line].length>=35)
+				line+=1;
+			txt[line]=txt[line]+this.tutorialText[this.tutorialed][this.tutorialStep].charAt(i);
+			
+		}	
+		if(Input.equals(13))
+		{
+			this.tutorialStep+=1;
+			this.tutorialFrame=0;
+		}
+	}
+	surface.textAlign = 'start';
+	surface.font = "25px pixel";
+	surface.fillStyle="rgb(255,255,255)";
+	for(i=0;i<=line;i++)
+	{
+		surface.fillText(txt[i],410,60+20*i);
+	}
+	
+}
+
+
 
 /**
  * Manage the monsters and bonus
@@ -176,13 +266,13 @@ Game.prototype.inputUpdate=function()
 	else if(Input.equals(38))
 		this.player.move("Up");
 	else if(Input.equals(32))
-		this.player.discharge();
+		this.player.discharge();	
 	else if(Input.equals(66))
 		this.player.changeMode();
 	else if(Input.equals(27))
 		this.paused=true;
 	else if(Input.equals(78))
-		this.reload();
+		this.reload();		
 }
 
 /**
@@ -235,13 +325,17 @@ Game.prototype.newLevel=function()
 {
 	this.timer.reset();
 	this.level+=1;
-	nb=Levels[this.level][0];
+	nb=Levels[this.level][1];
+	this.entities=this.walls;
 	for(i=0;i<nb;i++)
 	{
 		this.walls[i]=new Wall(this.entities);
 		this.savedWalls[i]=new Array(this.walls[i].x,this.walls[i].y,this.walls[i].width,this.walls[i].height);
+		this.entities=this.walls;
+		this.walls[i].update(this.entities);
+		if(this.walls[i].blocked)
+			i=i-1;
 	}
-	this.entities=this.walls;
 	this.entities.push(this.player);
 	this.stage=new Stage(Levels[this.level]);
 }
@@ -269,7 +363,7 @@ Game.prototype.reload=function()
 /**
  * Show the gameOver screen 
  **/
-Game.prototype.gameOver=function()
+Game.prototype.gameOver=function(cause)
 {
 	if(this.frame==0 && this.player.y <800)
 		this.player.y=this.player.height*-1;
@@ -288,11 +382,18 @@ Game.prototype.gameOver=function()
 	else
 		this.player.y=800;
 	surface.drawImage(this.gameOverFire,0-this.frame,629);
+	surface.textAlign = 'center';
 	surface.font = "80px pixel";
 	surface.fillStyle = "rgb(255,255,255)";
-	surface.fillText("Game Over",800/2-140,300);
+	surface.fillText("Game Over",800/2,300);
+	surface.font = "35px pixel";
+	surface.fillText(cause,800/2,352);
 	surface.font = "25px pixel";
-	surface.fillText("-Push Space-",800/2-60,352);
+	surface.fillText("-Push Space-",800/2,400);
+	surface.textAlign = 'start';
+	
+	
+	
 	if(Input.equals(32))
 		Scene=new Game();
 		
@@ -312,12 +413,13 @@ Game.prototype.pause=function()
 		this.paused=false;
 		this.player.fat=25;
 	}
-		
+	surface.textAlign = 'center';		
 	surface.font = "80px pixel";
 	surface.fillStyle = "rgb(255,255,255)";
-	surface.fillText("Game Paused",800/2-150,300);
+	surface.fillText("Game Paused",800/2,300);
 	surface.font = "25px pixel";
-	surface.fillText("-Push Escape to Continue or N to retry this level-",800/2-170,352);
+	surface.fillText("-Push Escape to Continue or N to retry this level-",800/2,352);
+	surface.textAlign = 'start';
 
 }
 
@@ -326,6 +428,15 @@ Game.prototype.pause=function()
  **/
 Game.prototype.gameWin=function()
 {
+	time=this.timer.min*60+this.timer.sec;
+	score=Math.round((100-(time*100)/Levels[this.level][0])*this.player.life);
+	surface.font = "80px pixel";
+	surface.fillStyle = "rgb(255,255,255)";
+	surface.textAlign = 'center';
+	surface.fillText("Finished with "+score+" points !",800/2,300);
+	surface.font = "25px pixel";
+	surface.fillText("-Push Space to Continue or S to send your score-",800/2,352);
+	surface.textAlign = 'start';
 
 }
 
@@ -350,7 +461,7 @@ Game.prototype.addParticle=function(object)
  **/
 Game.prototype.sendScore=function(userTemp,scoreTemp)
 {
-	this.sender.open('POST','Score.php',true);
+	this.sender.open('POST','http://chaipokoi.olympe.in/Spectr/RES/Score.php',true);
 	this.sender.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	this.sender.send("user="+userTemp+"&score="+scoreTemp);
 }
