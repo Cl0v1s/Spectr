@@ -18,18 +18,41 @@ function Game()
 	this.sender=new XMLHttpRequest();
 	Sender=this.sender;
 	this.textSpeed=0.3;
+	this.user="chaipokoi";
 	
 	this.tutorialed=0;
 	this.tutorialStep=0;
 	this.tutorialFrame=0;
+	this.tutorialOpacity=1,
 	this.tutorialText=new Array();
 	this.tutorialText[0]=new Array();
-	//                       |                                  |                                  |                                  |                                  |                                  |                                  |
+	this.tutorialText[1]=new Array();
+	this.tutorialText[2]=new Array();
+	//                       |                                  |                                  |                                  |                                  |                                  |                                  |                                  |
 	this.tutorialText[0][0]="Bon.. Et Bien je vais aller vite,  je n'ai pas que ça à faire...      Bref...                            Tu es mort.";
 	this.tutorialText[0][1]="Et tant qu'à faire,                le paradis existe...               Mais vois tu,                      je m'ennuie un peu moi...          Le jugement dernier...             Tout ça tout ça...";
 	this.tutorialText[0][2]="C'est drole que cinq minutes...    La compétition c'est plus sympa.   C'est pourquoi j'ai monté un petit jeu assez intéressant...           Et... Que tu sois joueur ou pas... Tu vas devoir y participer.";
-	this.tutorialText[0][2]="Les règles sont simples...         Il te suffit de pousser les blocs  d'énergie vitale...                Dans les emplacement qui           apparaissent dans les limbes.      Et ceci le plus rapidement         possible...";
+	this.tutorialText[0][3]="Les règles sont simples...         Il te suffit de pousser les blocs  d'énergie vitale...                Dans les emplacement qui           apparaissent dans les limbes.      Et ceci le plus rapidement         possible...";
+	this.tutorialText[0][4]="Vas y, essaie...                   Fonce comme une brute              dans un bloc pour le pousser       hors des limites rouges...";
 	
+	this.tutorialText[1][0]="Bravo...                           Bien comme tu as pu le             remarquer, si tu pousse le bloc    hors de la limite rouge...";
+	this.tutorialText[1][1]="Celui-ci devient lui-meme écarlate.Ce changement de couleur signifie  que tu as trop fait devier la      précieuse énergie... Et que tu ne  peux donc plus l'utiliser... ";
+	this.tutorialText[1][2]="Si tu pousses trop de blocs hors   des limites et que tu n'en possède plus assez pour remplir les        emplacements...";
+	this.tutorialText[1][3]="Alors...                           Tu seras condamné à errer          en enfer...";
+	this.tutorialText[1][4]="Bien pousse maintenant un bloc dansl'emplacement...";
+	
+	this.tutorialText[2][0]="Décidement...Tu es une fleche...   Malheureusement pousser l'energie  dans un emplacement ne suffit pas. En effet, il faut que l'énergie    offerte soit à la mesure de son    receptacle...";
+	this.tutorialText[2][1]="Je n'ai pas envie de me retrouver  avec encore plus de suicides sur   les bras...";
+	this.tutorialText[2][2]="Bref.                              Je compte bien t'expliquer         comment tailler l'energie vitale   sur-mesure...";
+	this.tutorialText[2][3]="Pour cela... Appuie sur 'B'...     Cette action aura pour effet de    'changer' ton mode opératoire...   Comme tu peux le voir... Tu        disposes de trois 'modes'...";
+	this.tutorialText[2][4]="Celui avec le muffin te permet de  ronger les blocs d'energie         tandis que celui avec l'entonnoir  te permet de les regonfler...      Enfin celui avec la fleche te      permet de pousser les blocs...";
+	this.tutorialText[2][5]="Lorsque tu rognes un bloc          l'énergie que tu retires du bloc   se retrouve dans ton ame...        Tu peux connaitre la quantité      d'énergie dont tu disposes en      jetant un coup d'oeil à la jauge   en bas à gauche de l'écran.";
+	this.tutorialText[2][6]="Cette jauge diminue lorsque tu     redistribue l'énergie vitale dans  un bloc...De plus comme celle-ci   n'est pas tienne, elle diminue     régulièrement au cours du temps... Si tu déverse toute l'énergie      vitale que tu as emprunté...       Alors tu perdras une vie...";
+	this.tutorialText[2][7]="En jouant avec le bouton 'B'...    Arrange toi pour que le bloc       corresponde parfaitement à son     emplacement...";
+
+
+
+
 	this.gameOverFire=new Image();
 	this.gameOverFire.src="graphics/fire.png";
 	this.gameOverHalo=new Image();
@@ -113,22 +136,36 @@ Game.prototype.update=function()
 	}
 	
 	this.hudUpdate();
-	if(this.tutorialed != true)
+	if(this.tutorialed != "validated")
 		this.tutorial();
 	
 	
 }
 
 /**
- * Learn to the player how to play
+ * Allow the player to progress in the tutorial
+ **/
+Game.prototype.tutorialProgress=function(stat)
+{
+	if(this.tutorialStep==this.tutorialText[this.tutorialed].length-1)
+	{
+		this.tutorialed=stat;
+		this.tutorialFrame=0;
+		this.tutorialStep=0;
+	}
+}
+
+/**
+ * Learn the player how to play
  **/
 Game.prototype.tutorial=function()
 {
-	surface.drawImage(this.boxInfo,400,0);
 	txt=new Array("","","","","","","","");
 	line=0;
 	this.tutorialFrame+=this.textSpeed;
-	if(this.tutorialFrame<=this.tutorialText[this.tutorialed][this.tutorialStep].length)
+	if(this.tutorialStep<this.tutorialText[this.tutorialed].length-1 && this.tutorialFrame<=this.tutorialText[this.tutorialed][this.tutorialStep].length)
+	{
+		this.tutorialOpacity=1;
 		for(i=0;i<this.tutorialFrame;i++)
 		{
 			if(txt[line].length>=35)
@@ -137,7 +174,8 @@ Game.prototype.tutorial=function()
 			if(Input.equals(13))
 				this.tutorialFrame=this.tutorialText[this.tutorialed][this.tutorialStep].length;
 		}
-	else
+	}
+	else if(this.tutorialStep<this.tutorialText[this.tutorialed].length-1)
 	{
 		for(i=0;i<this.tutorialFrame;i++)
 		{
@@ -152,12 +190,34 @@ Game.prototype.tutorial=function()
 			this.tutorialFrame=0;
 		}
 	}
-	surface.textAlign = 'start';
-	surface.font = "25px pixel";
-	surface.fillStyle="rgb(255,255,255)";
-	for(i=0;i<=line;i++)
+	if(this.tutorialStep<this.tutorialText[this.tutorialed].length-1)
 	{
-		surface.fillText(txt[i],410,60+20*i);
+		surface.drawImage(this.boxInfo,400,0);
+		surface.textAlign = 'start';
+		surface.font = "24px pixel";
+		surface.fillStyle="rgb(255,255,255)";
+		for(i=0;i<=line;i++)
+			surface.fillText(txt[i],410,60+20*i);
+	}
+	else
+	{
+		if(this.tutorialOpacity>0.21)
+			this.tutorialOpacity-=0.0005;
+		surface.globalAlpha=this.tutorialOpacity;
+		surface.drawImage(this.boxInfo,400,0);
+		for(i=0;i<this.tutorialFrame;i++)
+		{
+			if(txt[line].length>=35)
+				line+=1;
+			txt[line]=txt[line]+this.tutorialText[this.tutorialed][this.tutorialStep].charAt(i);
+			
+		}	
+		surface.textAlign = 'start';
+		surface.font = "24px pixel";
+		surface.fillStyle="rgb(255,255,255)";
+		for(i=0;i<=line;i++)
+			surface.fillText(txt[i],410,60+20*i);		
+		surface.globalAlpha=1;
 	}
 	
 }
@@ -324,8 +384,11 @@ Game.prototype.hudUpdate=function()
 Game.prototype.newLevel=function()
 {
 	this.timer.reset();
+	this.player.reset();
 	this.level+=1;
 	nb=Levels[this.level][1];
+	this.walls=new Array();
+	this.savedWalls=new Array();
 	this.entities=this.walls;
 	for(i=0;i<nb;i++)
 	{
@@ -437,6 +500,10 @@ Game.prototype.gameWin=function()
 	surface.font = "25px pixel";
 	surface.fillText("-Push Space to Continue or S to send your score-",800/2,352);
 	surface.textAlign = 'start';
+	if(Input.equals(32))
+		this.newLevel();
+	else if(Input.equals(83))
+		this.sendScore(this.user,score);;
 
 }
 

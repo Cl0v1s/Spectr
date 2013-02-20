@@ -29,6 +29,17 @@ function Player(xTemp,yTemp,dirTemp)
 	this.halo=new Halo(0,0,this);
 }
 
+
+/**
+ * Replace the player at his origin
+ **/
+Player.prototype.reset=function()
+{
+	this.x=0;
+	this.y=0;
+	this.fat=25;	
+}
+
 /**
  * Draw and animate the player on the screen
  **/ 
@@ -44,19 +55,21 @@ Player.prototype.update=function(others)
 	
 	if(this.energy<=30)
 		this.energy+=this.ratioEnergy;
-		
-	if(this.fat>this.fatMax)
-		this.fat=this.fatMax;
-	if(this.fat>=0.02)
-		this.fat-=0.02;
-	else
+	if(Scene.tutorialed >=2 || Scene.tutorialed=="validated")	
 	{
-		this.life-=1;
-		this.fat+=Math.floor(Math.random()*(this.fatMax-25))+25;
-		SoundEfx.play("hurt.wav",0.6);
+		if(this.fat>this.fatMax)
+			this.fat=this.fatMax;
+		if(this.fat>=0.02)
+			this.fat-=0.02;
+		else
+		{
+			this.life-=1;
+			this.fat+=Math.floor(Math.random()*(this.fatMax-25))+25;
+			SoundEfx.play("hurt.wav",0.6);
+		}
+		if(this.life<=0)
+			this.dead=true;
 	}
-	if(this.life<=0)
-		this.dead=true;
 }
 
 /**
@@ -79,7 +92,7 @@ Player.prototype.updatePos=function(others)
 	else
 		this.stop();
 		
-	this.halo.setPos(this.x+Math.round(75/2)-Math.round(450/2)-27,this.y+Math.round(75/2)-Math.round(450/2));
+	this.halo.setPos(this.x+Math.round(75/2)-Math.round(450/2)-17,this.y+Math.round(75/2)-Math.round(450/2));
 }
 
 /**

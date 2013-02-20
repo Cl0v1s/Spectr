@@ -23,6 +23,8 @@ Box.prototype.update=function(others)
 			{
 				if((other.width>=this.width-5 && other.width<=this.width+5) && (other.height>=this.height-5 && other.height<=this.height+5))
 				{
+					if(Scene.tutorialed==2)
+						Scene.tutorialProgress(3);
 					other.x=this.x;
 					other.y=this.y;
 					other.width=this.width;
@@ -31,6 +33,8 @@ Box.prototype.update=function(others)
 					this.validate=true;
 				}
 			}
+			else if(other.x+other.width>this.x && other.x<this.x+this.width && other.y+other.height>this.y && other.y<this.y+this.height && Scene.tutorialed==1)
+				Scene.tutorialProgress(2);
 		}
 	}
 	return this.validate;

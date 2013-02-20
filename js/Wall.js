@@ -147,6 +147,8 @@ Wall.prototype.colidWith=function(other,others)
 {
 				if(other instanceof Player && !this.validate)
 				{
+					if(Scene.tutorialed==0)
+						Scene.tutorialProgress(1);
 					player=other;
 					if(player.x+player.width>this.x+this.width/2 && player.dir=="Left")
 					{
