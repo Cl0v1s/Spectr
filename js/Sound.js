@@ -8,9 +8,9 @@ function Sound(elementTemp)
 /**
  * Play a sound effect
  **/
-Sound.prototype.play=function(soundTemp,volTemp)
+Sound.prototype.play=function(soundTemp,volTemp,secur)
 {
-	if((this.prev != soundTemp) || (this.prev==soundTemp && this.timer<=0))
+	if((secur==undefined && (this.prev != soundTemp) || (this.prev==soundTemp && this.timer<=0)) || secur==false)
 	{
 		this.element.src="sound/"+soundTemp;
 		if(volTemp != undefined)

@@ -61,7 +61,11 @@ Wall.prototype.update=function(others)
 		this.stop();
 		
 	if(this.x<76 || this.y<76 || this.x+this.width>800-76 || this.y+this.height>700-76)
+	{
+		if(Scene.tutorialed==0)
+			Scene.tutorialProgress(1);
 		this.blocked=true;
+	}
 		
 	this.velocity-=0.30;
 	if(this.velocity<0)
@@ -147,8 +151,6 @@ Wall.prototype.colidWith=function(other,others)
 {
 				if(other instanceof Player && !this.validate)
 				{
-					if(Scene.tutorialed==0)
-						Scene.tutorialProgress(1);
 					player=other;
 					if(player.x+player.width>this.x+this.width/2 && player.dir=="Left")
 					{

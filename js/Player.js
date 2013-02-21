@@ -1,14 +1,14 @@
 function Player(xTemp,yTemp,dirTemp)
 {
 	this.x=xTemp;
-	this.y=yTemp;
+	this.y=700/2-this.height/2;
 	this.velocity=0;
 	this.frame=10;
 	this.width=75;
 	this.height=75;
 	this.sprite=new Image();
 	if(dirTemp == undefined)
-		this.dir="Up";
+		this.dir="Right";
 	else
 		this.dir=dirTemp;
 	this.prevDir=this.dir;
@@ -36,7 +36,7 @@ function Player(xTemp,yTemp,dirTemp)
 Player.prototype.reset=function()
 {
 	this.x=0;
-	this.y=0;
+	this.y=700/2-this.height/2;
 	this.fat=25;	
 }
 

@@ -9,7 +9,7 @@ function Game()
 	this.savedWalls=new Array();
 	this.entities=new Array();
 	this.particles=new Array();
-	this.player=new Player(0,0,"Down");
+	this.player=new Player(0,0,"Right");
 	this.stage=undefined;
 	this.timer=new Timer(20,40);
 	this.newLevel();
@@ -28,10 +28,11 @@ function Game()
 	this.tutorialText[0]=new Array();
 	this.tutorialText[1]=new Array();
 	this.tutorialText[2]=new Array();
-	//                       |                                  |                                  |                                  |                                  |                                  |                                  |                                  |
+	this.tutorialText[3]=new Array();
+	//                       |                                  |                                  |                                  |                                  |                                  |                                  |                                  |                                  |
 	this.tutorialText[0][0]="Bon.. Et Bien je vais aller vite,  je n'ai pas que ça à faire...      Bref...                            Tu es mort.";
-	this.tutorialText[0][1]="Et tant qu'à faire,                le paradis existe...               Mais vois tu,                      je m'ennuie un peu moi...          Le jugement dernier...             Tout ça tout ça...";
-	this.tutorialText[0][2]="C'est drole que cinq minutes...    La compétition c'est plus sympa.   C'est pourquoi j'ai monté un petit jeu assez intéressant...           Et... Que tu sois joueur ou pas... Tu vas devoir y participer.";
+	this.tutorialText[0][1]="Et tant qu'à faire,                le paradis existe...               Mais vois tu,                      je m'ennuie un peu moi...          Le jugement dernier...             Tout ça tout ça... ";
+	this.tutorialText[0][2]="C'est drole que cinq minutes...    La compétition c'est plus sympa.   C'est pourquoi j'ai monté un petit jeu assez intéressant...           Et... Que tu sois joueur ou pas... Tu vas devoir y participer.         Bref, on va innover... Il va te    falloir te gagner ta place...";
 	this.tutorialText[0][3]="Les règles sont simples...         Il te suffit de pousser les blocs  d'énergie vitale...                Dans les emplacement qui           apparaissent dans les limbes.      Et ceci le plus rapidement         possible...";
 	this.tutorialText[0][4]="Vas y, essaie...                   Fonce comme une brute              dans un bloc pour le pousser       hors des limites rouges...";
 	
@@ -45,13 +46,19 @@ function Game()
 	this.tutorialText[2][1]="Je n'ai pas envie de me retrouver  avec encore plus de suicides sur   les bras...";
 	this.tutorialText[2][2]="Bref.                              Je compte bien t'expliquer         comment tailler l'energie vitale   sur-mesure...";
 	this.tutorialText[2][3]="Pour cela... Appuie sur 'B'...     Cette action aura pour effet de    'changer' ton mode opératoire...   Comme tu peux le voir... Tu        disposes de trois 'modes'...";
-	this.tutorialText[2][4]="Celui avec le muffin te permet de  ronger les blocs d'energie         tandis que celui avec l'entonnoir  te permet de les regonfler...      Enfin celui avec la fleche te      permet de pousser les blocs...";
+	this.tutorialText[2][4]="Celui avec le muffin te permet de  ronger les blocs d'energie         tandis que celui avec l'entonnoire  te permet de les regonfler...      Enfin celui avec la fleche te      permet de pousser les blocs...";
 	this.tutorialText[2][5]="Lorsque tu rognes un bloc          l'énergie que tu retires du bloc   se retrouve dans ton ame...        Tu peux connaitre la quantité      d'énergie dont tu disposes en      jetant un coup d'oeil à la jauge   en bas à gauche de l'écran.";
 	this.tutorialText[2][6]="Cette jauge diminue lorsque tu     redistribue l'énergie vitale dans  un bloc...De plus comme celle-ci   n'est pas tienne, elle diminue     régulièrement au cours du temps... Si tu déverse toute l'énergie      vitale que tu as emprunté...       Alors tu perdras une vie...";
 	this.tutorialText[2][7]="En jouant avec le bouton 'B'...    Arrange toi pour que le bloc       corresponde parfaitement à son     emplacement...";
 
-
-
+	this.tutorialText[3][0]="Bien... C'est presque terminé...   Enfin...";
+	this.tutorialText[3][1]="Durant la précdente partie tu as   du remarquer un petit carré de     couleur clignotant... Il s'agit    d'un bonus...En passant dessus     tu profiteras de divers            améliorations qui te faciliteront  la vie... ou plutot la mort...";
+	this.tutorialText[3][2]="...";
+	this.tutorialText[3][3]="...";
+	this.tutorialText[3][4]="Ah oui... Une dernière chose...    Les places pour le paradis sont    limitées...Aussi tu subiras la     visite de certains de tes camaradesqui risqueront de gacher ton beau  travail...";
+	this.tutorialText[3][5]="Tes congénères bleus viennent      'gonfler' tes blocs d'énergie      vitale tandis que les rouges       viennent les ronger...             Enfin les noirs, viscieux ne sont  visibles que par intermitances      et viendront te voler de la vie... ";
+	this.tutorialText[3][6]="Tu pourras faire fuir ces derniers en appuyant sur la touche 'espace' ...Ce qui aura pour effet d'emmetreun rayon lumineux qui fera paniquernos chers amis pervers...";
+	this.tutorialText[3][7]="Voilà... Je te laisse te           débrouiller... Et ne cherche pas   à appeler à l'aide...              Je n'ai pas que ça à faire...";
 
 	this.gameOverFire=new Image();
 	this.gameOverFire.src="graphics/fire.png";
@@ -163,7 +170,7 @@ Game.prototype.tutorial=function()
 	txt=new Array("","","","","","","","");
 	line=0;
 	this.tutorialFrame+=this.textSpeed;
-	if(this.tutorialStep<this.tutorialText[this.tutorialed].length-1 && this.tutorialFrame<=this.tutorialText[this.tutorialed][this.tutorialStep].length)
+	if((this.tutorialStep<this.tutorialText[this.tutorialed].length-1 && this.tutorialFrame<=this.tutorialText[this.tutorialed][this.tutorialStep].length))
 	{
 		this.tutorialOpacity=1;
 		for(i=0;i<this.tutorialFrame;i++)
@@ -216,8 +223,11 @@ Game.prototype.tutorial=function()
 		surface.font = "24px pixel";
 		surface.fillStyle="rgb(255,255,255)";
 		for(i=0;i<=line;i++)
-			surface.fillText(txt[i],410,60+20*i);		
+			surface.fillText(txt[i],410,60+20*i);
 		surface.globalAlpha=1;
+		if(Input.equals(13) && this.tutorialed==3)
+			this.tutorialed="validated";
+
 	}
 	
 }
@@ -231,7 +241,7 @@ Game.prototype.monsterUpdate=function()
 {
 	//spawn Monsters
 	this.spawnInterval+=1;
-	if(this.spawnInterval>=this.spawnIntervalLimit)
+	if(this.spawnInterval>=this.spawnIntervalLimit && this.level>0)
 	{
 		this.spawnIntervalLimit=Math.floor((Math.random()*10000)/(this.level+1));
 		this.spawnInterval=0;
@@ -330,9 +340,15 @@ Game.prototype.inputUpdate=function()
 	else if(Input.equals(66))
 		this.player.changeMode();
 	else if(Input.equals(27))
+	{
 		this.paused=true;
+		SoundEfx.play("bip.wav",0.2,false);	
+	}
 	else if(Input.equals(78))
-		this.reload();		
+	{
+		this.reload();	
+		SoundEfx.play("select.wav",0.2,false);
+	}		
 }
 
 /**
@@ -419,8 +435,7 @@ Game.prototype.reload=function()
 			this.walls[i].validate=false;
 		}
 	}
-	this.player.x=0;
-	this.player.y=0;
+	this.player.reset();
 }
 
 /**
@@ -468,9 +483,13 @@ Game.prototype.gameOver=function(cause)
 Game.prototype.pause=function()
 {
 	if(Input.equals(27) || Input.equals(13))
+	{
 		this.paused=false;
+		SoundEfx.play("bip.wav",0.2,false);		
+	}
 	else if(Input.equals(78))
 	{
+		SoundEfx.play("select.wav",0.2,false);
 		this.level-=1;
 		this.newLevel();
 		this.paused=false;
@@ -501,7 +520,10 @@ Game.prototype.gameWin=function()
 	surface.fillText("-Push Space to Continue or S to send your score-",800/2,352);
 	surface.textAlign = 'start';
 	if(Input.equals(32))
+	{
 		this.newLevel();
+		SoundEfx.play("select.wav",0.2,false);	
+	}
 	else if(Input.equals(83))
 		this.sendScore(this.user,score);;
 
