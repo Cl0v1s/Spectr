@@ -3,6 +3,7 @@ Sender=undefined;
 function Game()
 {
 	this.level=-1;
+	this.started=false;
 	this.spawnInterval=0;
 	this.spawnIntervalLimit=Math.floor((Math.random()*500));
 	this.walls=new Array();
@@ -33,7 +34,7 @@ function Game()
 	this.tutorialText[0][0]="Bon.. Et Bien je vais aller vite,  je n'ai pas que ça à faire...      Bref...                            Tu es mort.";
 	this.tutorialText[0][1]="Et tant qu'à faire,                le paradis existe...               Mais vois tu,                      je m'ennuie un peu moi...          Le jugement dernier...             Tout ça tout ça... ";
 	this.tutorialText[0][2]="C'est drole que cinq minutes...    La compétition c'est plus sympa.   C'est pourquoi j'ai monté un petit jeu assez intéressant...           Et... Que tu sois joueur ou pas... Tu vas devoir y participer.         Bref, on va innover... Il va te    falloir te gagner ta place...";
-	this.tutorialText[0][3]="Les règles sont simples...         Il te suffit de pousser les blocs  d'énergie vitale...                Dans les emplacement qui           apparaissent dans les limbes.      Et ceci le plus rapidement         possible...";
+	this.tutorialText[0][3]="Les règles sont simples...         Il te suffit de pousser les blocs  d'énergie vitale...                Dans les emplacements qui          apparaissent dans les limbes.      Et ceci le plus rapidement         possible...";
 	this.tutorialText[0][4]="Vas y, essaie...                   Fonce comme une brute              dans un bloc pour le pousser       hors des limites rouges...";
 	
 	this.tutorialText[1][0]="Bravo...                           Bien comme tu as pu le             remarquer, si tu pousse le bloc    hors de la limite rouge...";
@@ -82,6 +83,12 @@ function Game()
 Game.prototype.update=function()
 {
 	SoundEfx.update();
+	if(!this.started)
+	{
+		this.start();
+		return;
+	}
+	
 	if(this.paused)
 	{
 		this.pause();
@@ -147,6 +154,32 @@ Game.prototype.update=function()
 		this.tutorial();
 	
 	
+}
+
+/**
+ * Show the level and invite the player to press space
+ **/
+Game.prototype.start=function()
+{
+	clean();
+	surface.textAlign = 'center';		
+	surface.font = "75px pixel";
+	surface.fillStyle = "rgb(255,255,255)";
+	surface.fillText("Level "+this.level,800/2,700/2-75);
+	if(this.level==0 || this.level==1)
+	{
+		surface.font = "60px pixel";
+		surface.fillStyle = "rgb(150,150,150)";
+		surface.fillText("Tutorial",800/2,700/2+55-75);	
+	}
+	surface.fillStyle = "rgb(255,255,255)";	
+	surface.font = "35px pixel";
+	surface.fillText("-press space to start-",800/2,700/2+100-75);	
+	if(Input.equals(32))
+	{
+		this.started=true;
+		SoundEfx.play("select.wav",0.2,false);	
+	}
 }
 
 /**
@@ -399,6 +432,7 @@ Game.prototype.hudUpdate=function()
  **/
 Game.prototype.newLevel=function()
 {
+	this.started=false;
 	this.timer.reset();
 	this.player.reset();
 	this.level+=1;

@@ -4,7 +4,7 @@ var Input;
 
 window.onload = function() {
 	surface = document.getElementById('canvas').getContext('2d');
-	Scene=new Game();
+	Scene=new Loader();
 	SoundEfx=new Sound(new Audio());
 	Input=new Input();
 	Interval=setInterval(function() {

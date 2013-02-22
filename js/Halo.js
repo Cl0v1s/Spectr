@@ -8,8 +8,10 @@ function Halo(xTemp,yTemp,ownerTemp)
 	this.sprite.src="graphics/halo.png";
 	this.opacity=0;
 	this.flashing=false;
-	
-	this.ratioOpacity=ownerTemp.durationEnergy;
+	if(ownerTemp instanceof Player)
+		this.ratioOpacity=ownerTemp.durationEnergy;
+	else
+		this.ratioOpacity=ownerTemp
 }
 
 /**
