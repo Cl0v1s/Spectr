@@ -37,7 +37,7 @@ function Game()
 	this.tutorialText[0][3]="Les règles sont simples...         Il te suffit de pousser les blocs  d'énergie vitale...                Dans les emplacements qui          apparaissent dans les limbes.      Et ceci le plus rapidement         possible...";
 	this.tutorialText[0][4]="Vas y, essaie...                   Fonce comme une brute              dans un bloc pour le pousser       hors des limites rouges...";
 	
-	this.tutorialText[1][0]="Bravo...                           Bien comme tu as pu le             remarquer, si tu pousse le bloc    hors de la limite rouge...";
+	this.tutorialText[1][0]="Bravo...                           Bien comme tu as pu le             remarquer, si tu pousses le bloc   hors de la limite rouge...";
 	this.tutorialText[1][1]="Celui-ci devient lui-meme écarlate.Ce changement de couleur signifie  que tu as trop fait devier la      précieuse énergie... Et que tu ne  peux donc plus l'utiliser... ";
 	this.tutorialText[1][2]="Si tu pousses trop de blocs hors   des limites et que tu n'en possède plus assez pour remplir les        emplacements...";
 	this.tutorialText[1][3]="Alors...                           Tu seras condamné à errer          en enfer...";
@@ -180,6 +180,7 @@ Game.prototype.start=function()
 		this.started=true;
 		SoundEfx.play("select.wav",0.2,false);	
 	}
+	surface.textAlign = 'start';	
 }
 
 /**
@@ -241,7 +242,7 @@ Game.prototype.tutorial=function()
 	}
 	else
 	{
-		if(this.tutorialOpacity>0.21)
+		if(this.tutorialOpacity>0.21 || this.tutorialed==3)
 			this.tutorialOpacity-=0.0005;
 		surface.globalAlpha=this.tutorialOpacity;
 		surface.drawImage(this.boxInfo,400,0);
@@ -258,7 +259,7 @@ Game.prototype.tutorial=function()
 		for(i=0;i<=line;i++)
 			surface.fillText(txt[i],410,60+20*i);
 		surface.globalAlpha=1;
-		if(Input.equals(13) && this.tutorialed==3)
+		if(this.tutorialOpacity<=0)
 			this.tutorialed="validated";
 
 	}
@@ -432,6 +433,7 @@ Game.prototype.hudUpdate=function()
  **/
 Game.prototype.newLevel=function()
 {
+	clean();
 	this.started=false;
 	this.timer.reset();
 	this.player.reset();
@@ -440,6 +442,7 @@ Game.prototype.newLevel=function()
 	this.walls=new Array();
 	this.savedWalls=new Array();
 	this.entities=this.walls;
+	this.stage=new Stage(Levels[this.level]);
 	for(i=0;i<nb;i++)
 	{
 		this.walls[i]=new Wall(this.entities);
@@ -450,7 +453,12 @@ Game.prototype.newLevel=function()
 			i=i-1;
 	}
 	this.entities.push(this.player);
-	this.stage=new Stage(Levels[this.level]);
+	clean();
+	if(this.stage.update(this.entities))
+	{
+		this.level-=1;
+		this.newLevel();
+	}
 }
 
 /**

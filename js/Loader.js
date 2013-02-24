@@ -100,6 +100,11 @@ Loader.prototype.load=function()
 Loader.prototype.update=function()
 {
 	clean();
+	surface.textAlign = 'center';		
+	surface.font = "75px pixel";
+	surface.fillStyle = "rgb(255,255,255)";
+	surface.fillText("Chargement des fichiers...",800/2,700/2+75);
+	surface.textAlign = 'start';	
 	surface.fillStyle="rgb(150,150,150)";
 	surface.fillRect(800/2-100,700/2-25/2,200,25);
 	progress=(fileLoaded*100/this.sources.length)*2;

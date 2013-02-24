@@ -89,6 +89,8 @@ Menu.prototype.update=function()
 	surface.textAlign = 'start';
 	surface.fillText("Poussez le bloc de votre choix",400,600);
 	surface.fillText("dans l'emplacement vide",425,630);
+	surface.fillText("Ou l'histoire d'une ame perdue.",100,200);
+	surface.fillText("appuyez sur 'espace' pour émettre de la lumière",400,100);
 
 }
 

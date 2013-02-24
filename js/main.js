@@ -1,13 +1,20 @@
 var Scene;
+var prevScene;
 var SoundEfx;
 var Input;
 
 window.onload = function() {
 	surface = document.getElementById('canvas').getContext('2d');
 	Scene=new Loader();
+	prevScene=Scene;
 	SoundEfx=new Sound(new Audio());
 	Input=new Input();
 	Interval=setInterval(function() {
+		if(prevScene != Scene)
+		{
+			prevScene=Scene;
+			return;
+		}
 		Scene.update();
 	}, 20);
 }
