@@ -15,7 +15,6 @@ function Menu()
 	this.haloY=1;
 	this.halo.flashing=true;
 
-
 }
 
 /**

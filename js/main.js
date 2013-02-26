@@ -1,9 +1,13 @@
+var Start;
 var Scene;
 var prevScene;
 var SoundEfx;
 var Input;
 
 window.onload = function() {
+	canvas=document.getElementById('canvas');
+	login=document.getElementById('login');
+	canvas.style.opacity=0;
 	surface = document.getElementById('canvas').getContext('2d');
 	Scene=new Loader();
 	prevScene=Scene;
@@ -18,6 +22,64 @@ window.onload = function() {
 		Scene.update();
 	}, 20);
 }
+
+function start()
+{
+	Start=setInterval(function() {
+		if(canvas.style.opacity==0.0)
+		{
+			canvas.style.opacity=0.2;
+			login.style.opacity=0.8;
+		}
+		else if(canvas.style.opacity==0.2)
+		{
+			canvas.style.opacity=0.3;
+			login.style.opacity=0.7;
+		}
+		else if(canvas.style.opacity==0.3)
+		{
+			canvas.style.opacity=0.4;
+			login.style.opacity=0.6;
+		}
+		else if(canvas.style.opacity==0.4)
+		{
+			canvas.style.opacity=0.5;
+			login.style.opacity=0.5;
+		}
+		else if(canvas.style.opacity==0.5)
+		{
+			canvas.style.opacity=0.6;
+			login.style.opacity=0.4;
+		}
+		else if(canvas.style.opacity==0.6)
+		{
+			canvas.style.opacity=0.7;
+			login.style.opacity=0.3;
+		}
+		else if(canvas.style.opacity==0.7)
+		{
+			canvas.style.opacity=0.8;
+			login.style.opacity=0.2;
+		}
+		else if(canvas.style.opacity==0.8)
+		{
+			canvas.style.opacity=0.9;
+			login.style.opacity=0.1;
+		}
+		else if(canvas.style.opacity==0.9)
+		{
+			canvas.style.opacity=1;
+			login.style.opacity=0;
+			login.style.left=-8000;
+		}
+		else
+			clearInterval(Start);
+
+		
+	},20);
+}
+
+
 
 function clean()
 {
