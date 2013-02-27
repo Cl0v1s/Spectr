@@ -1,7 +1,10 @@
 function Menu()
 {
+	this.user="";
+	this.password="";
 	this.tutorialed=-1;
-	
+	this.title=new Image();
+	this.title.src="./graphics/title.png";
 	this.player=new Player(800/2-75/2,0,"Up");
 	this.player.y=500;
 	this.player.x=800/2-75/2;
@@ -14,6 +17,11 @@ function Menu()
 	this.haloX=1;
 	this.haloY=1;
 	this.halo.flashing=true;
+	this.notif=new Image();
+	this.notif.src="./graphics/normalBox.png";
+	this.notification=false;
+	this.oldnotif="";
+	this.notificationFrame=0;
 
 }
 
@@ -39,7 +47,7 @@ Menu.prototype.update=function()
 	if(result)
 	{
 		if(this.play.validate)
-			Scene=new Game();
+			Scene=new Game(this.user);
 		else if(this.score.validate)
 			Scene=new Score();
 	}
@@ -90,7 +98,89 @@ Menu.prototype.update=function()
 	surface.fillText("dans l'emplacement vide",425,630);
 	surface.fillText("Ou l'histoire d'une ame perdue.",100,200);
 	surface.fillText("appuyez sur 'espace' pour émettre de la lumière",400,100);
+	surface.drawImage(this.title,70,70);
+	
+	if(this.notification != false)
+	{
+		this.oldnotif=this.notification;
+			this.notificationFrame+=1;
+		if(this.notificationFrame>=80)
+		{
+			this.notification=false;
+		}
+	}
+	else if(this.notificationFrame>0)
+		this.notificationFrame-=1;
+		
+	surface.textAlign = 'center';	
+	surface.fillStyle = "rgb(50,50,50)";
+	surface.font = "30px pixel";
+	if(this.notificationFrame<40)
+	{
+		surface.drawImage(this.notif,400,-230+this.notificationFrame*1.5);
+		surface.fillText(this.oldnotif,400+300/2,this.notificationFrame*1.5-20);
+	}
+	else 
+	{
+		surface.drawImage(this.notif,400,-230+40*1.5);
+		surface.fillText(this.oldnotif,400+300/2,40*1.5-20);
+	}
+		
+	surface.textAlign = 'start';
 
+}
+
+/** 
+ * Check if the player have an account or no. 
+ **/
+Menu.prototype.login=function()
+{
+	user=document.getElementById('user').value;
+	password=document.getElementById('password').value;
+	this.user=user;
+	this.password=password;
+	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+user+"&password="+password+"&op=login",true);
+	Sender.send(null);
+	Sender.onreadystatechange=function()
+	{
+					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0))
+					{
+						if(Sender.responseText==="FAIL" && Scene instanceof Menu)	
+							Scene.register(user,password);
+						else if(Sender.responseText==="OK" && Scene instanceof Menu)
+							Scene.notify("You are logged.");
+						else if(Scene instanceof Menu)
+							Scene.notify("Failed to login.");
+					}						
+	}
+}
+
+
+/**
+ * Create an account
+ **/
+Menu.prototype.register=function(userTemp,passTemp)
+{
+	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+user+"&password="+password+"&op=register",true);
+	Sender.send(null);
+	Sender.onreadystatechange=function()
+	{
+					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0))
+					{
+						if(Sender.responseText==="1" && Scene instanceof Menu)	
+							Scene.notify("Account created.");
+						else if(Scene instanceof Menu)
+							Scene.notify("Can't reach servers.");						
+					}						
+	}
+}
+
+/**
+ * show a notification
+ **/
+Menu.prototype.notify=function(senTemp)
+{
+	this.notification=senTemp;
 }
 
 /**

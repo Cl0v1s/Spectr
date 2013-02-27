@@ -3,13 +3,17 @@ var Scene;
 var prevScene;
 var SoundEfx;
 var Input;
+var Sender;
+var Response;
 
 window.onload = function() {
 	canvas=document.getElementById('canvas');
 	login=document.getElementById('login');
 	canvas.style.opacity=0;
+	Response=undefined;
 	surface = document.getElementById('canvas').getContext('2d');
 	Scene=new Loader();
+	Sender=new XMLHttpRequest();
 	prevScene=Scene;
 	SoundEfx=new Sound(new Audio());
 	Input=new Input();
@@ -73,7 +77,10 @@ function start()
 			login.style.left=-8000;
 		}
 		else
+		{
 			clearInterval(Start);
+			Scene.login();
+		}
 
 		
 	},20);

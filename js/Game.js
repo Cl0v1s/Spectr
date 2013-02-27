@@ -1,6 +1,5 @@
-Sender=undefined;
 
-function Game()
+function Game(userTemp)
 {
 	this.level=-1;
 	this.started=false;
@@ -16,10 +15,8 @@ function Game()
 	this.newLevel();
 	this.frame=0;
 	this.paused=false;
-	this.sender=new XMLHttpRequest();
-	Sender=this.sender;
 	this.textSpeed=0.3;
-	this.user="chaipokoi";
+	this.user=userTemp;
 	this.scored=false;
 	
 	this.tutorialed=0;
@@ -436,6 +433,7 @@ Game.prototype.hudUpdate=function()
 Game.prototype.newLevel=function()
 {
 	clean();
+	Response=undefined;
 	this.scored=false;
 	this.started=false;
 	this.timer.reset();
@@ -569,10 +567,10 @@ Game.prototype.gameWin=function()
 		this.showScore(this.level);
 		this.scored=true;
 	}
-	if(Sender instanceof XMLHttpRequest == false && Sender != undefined && Sender != "")
+	if(Response != undefined && Response != "")
 	{
 	    surface.drawImage(this.boxInfo,800/2-300,392);
-		data=Sender.split("///");
+		data=Response.split("///");
 		for(i=0;i<5;i++)
 		{
 			if(data[i] != undefined)
@@ -615,9 +613,9 @@ Game.prototype.addParticle=function(object)
  **/
 Game.prototype.sendScore=function(userTemp,scoreTemp)
 {
-	this.sender.open('GET',"http://minequest.servegame.com/Spectr/sendScore.php?user="+userTemp+"&level="+this.level+"&score="+scoreTemp,true);
-	this.sender.send(null);
-	this.sender.onreadystatechange=function(){}
+	Sender.open('GET',"http://minequest.servegame.com/Spectr/sendScore.php?user="+userTemp+"&level="+this.level+"&score="+scoreTemp,true);
+	Sender.send(null);
+	Sender.onreadystatechange=function(){}
 }
 
 /**
@@ -625,13 +623,12 @@ Game.prototype.sendScore=function(userTemp,scoreTemp)
  **/
 Game.prototype.showScore=function(levelTemp)
 {
-	Sender=this.sender;
 	Sender.open('GET',"http://minequest.servegame.com/Spectr/showScore.php?level="+levelTemp,true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{
 					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0))
-						Sender=Sender.responseText;				
+						Response=Sender.responseText;				
 	}
 }
 
