@@ -22,16 +22,18 @@
 				<script type="text/javascript" src="js/Loader.js"></script>
 					<script type="text/javascript" src="js/main.js"></script>
 	</head>
-	<body>
+	<body style="background-color: black;">
 		<center>
 			<canvas id="canvas" width=800 height=700></canvas>
-			<div id="login" style="position:relative;top:-500;">
-			
+			<div id="login" style="color:white;position:relative;top:-500;background-image: url('./graphics/normalBox.png');background-repeat: no-repeat;width:300;height:230;padding-top: 50px;">
+				<img src="./graphics/title.png" alt="title" style="position:relative;left:150px;top:-150px;">
+				<p style="font-family:pixel;position:relative;top:-100px;font-size:21px;">
 				Nom de Joueur:<br>
-				<input id="user"><br><br>
+				<input id="user" style="font-family:pixel;background: url('./graphics/input.png');border:none;width:153px;height:23px;padding-left:5px;padding-right:5px;"><br><br>
 				Mot de Passe:<br>
-				<input id="password"><br><br>
+				<input id="password" style="font-family:pixel;background: url('./graphics/input.png');border:none;width:153px;height:23px;padding-left:5px;padding-right:5px;"><br><br>
 				<img src="" alt="go" onclick="start()";>
+				</p>
 			
 			</div>
 
