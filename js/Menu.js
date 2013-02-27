@@ -97,6 +97,7 @@ Menu.prototype.update=function()
 	surface.fillText("Poussez le bloc de votre choix",400,600);
 	surface.fillText("dans l'emplacement vide",425,630);
 	surface.fillText("Ou l'histoire d'une ame perdue.",100,200);
+	surface.font = "20px pixel";
 	surface.fillText("appuyez sur 'espace' pour émettre de la lumière",400,100);
 	surface.drawImage(this.title,70,70);
 	
@@ -145,11 +146,11 @@ Menu.prototype.login=function()
 	{
 					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0))
 					{
-						if(Sender.responseText==="FAIL" && Scene instanceof Menu)	
+						if(Sender.responseText==="FAIL")	
 							Scene.register(user,password);
-						else if(Sender.responseText==="OK" && Scene instanceof Menu)
+						else if(Sender.responseText==="OK")
 							Scene.notify("You are logged.");
-						else if(Scene instanceof Menu)
+						else
 							Scene.notify("Failed to login.");
 					}						
 	}
@@ -167,9 +168,9 @@ Menu.prototype.register=function(userTemp,passTemp)
 	{
 					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0))
 					{
-						if(Sender.responseText==="1" && Scene instanceof Menu)	
+						if(Sender.responseText==="1")	
 							Scene.notify("Account created.");
-						else if(Scene instanceof Menu)
+						else
 							Scene.notify("Can't reach servers.");						
 					}						
 	}

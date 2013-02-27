@@ -7,7 +7,7 @@ var Sender;
 var Response;
 
 window.onload = function() {
-	canvas=document.getElementById('canvas');
+	canvas=document.getElementById('frame');
 	login=document.getElementById('login');
 	canvas.style.opacity=0;
 	Response=undefined;

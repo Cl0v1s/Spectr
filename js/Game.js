@@ -73,8 +73,22 @@ function Game(userTemp)
 	this.frontierFlashing=false;
 	this.frontierFlash=100;
 	
+	this.notif=new Image();
+	this.notif.src="./graphics/normalBox.png";
+	this.notification=false;
+	this.oldnotif="";
+	this.notificationFrame=0;
 
 }
+
+/**
+ * show a notification
+ **/
+Game.prototype.notify=function(senTemp)
+{
+	this.notification=senTemp;
+}
+
 
 /**
  * Update the game, draw the screen
@@ -425,6 +439,34 @@ Game.prototype.hudUpdate=function()
 	{
 		surface.drawImage(this.life,739,100+o*60);
 	}
+	//notification
+	if(this.notification != false)
+	{
+		this.oldnotif=this.notification;
+			this.notificationFrame+=1;
+		if(this.notificationFrame>=80)
+		{
+			this.notification=false;
+		}
+	}
+	else if(this.notificationFrame>0)
+		this.notificationFrame-=1;
+		
+	surface.textAlign = 'center';	
+	surface.fillStyle = "rgb(50,50,50)";
+	surface.font = "30px pixel";
+	if(this.notificationFrame<40)
+	{
+		surface.drawImage(this.notif,400,-230+this.notificationFrame*1.5);
+		surface.fillText(this.oldnotif,400+300/2,this.notificationFrame*1.5-20);
+	}
+	else 
+	{
+		surface.drawImage(this.notif,400,-230+40*1.5);
+		surface.fillText(this.oldnotif,400+300/2,40*1.5-20);
+	}
+		
+	surface.textAlign = 'start';
 }
 
 /**
