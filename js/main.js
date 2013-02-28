@@ -5,8 +5,10 @@ var SoundEfx;
 var Input;
 var Sender;
 var Response;
+var Online;
 
 window.onload = function() {
+	Online=false;
 	canvas=document.getElementById('frame');
 	login=document.getElementById('login');
 	canvas.style.opacity=0;

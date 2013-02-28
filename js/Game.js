@@ -1,7 +1,7 @@
 
-function Game(userTemp)
+function Game(userTemp,passTemp)
 {
-	this.level=-1;
+	this.level=undefined;
 	this.started=false;
 	this.spawnInterval=0;
 	this.spawnIntervalLimit=Math.floor((Math.random()*500));
@@ -12,14 +12,14 @@ function Game(userTemp)
 	this.player=new Player(0,0,"Right");
 	this.stage=undefined;
 	this.timer=new Timer(20,40);
-	this.newLevel();
 	this.frame=0;
 	this.paused=false;
 	this.textSpeed=0.3;
 	this.user=userTemp;
+	this.password=passTemp;
 	this.scored=false;
 	
-	this.tutorialed=0;
+	this.tutorialed=undefined;
 	this.tutorialStep=0;
 	this.tutorialFrame=0;
 	this.tutorialOpacity=1,
@@ -58,7 +58,14 @@ function Game(userTemp)
 	this.tutorialText[3][5]="Tes congénères bleus viennent      'gonfler' tes blocs d'énergie      vitale tandis que les rouges       viennent les ronger...             Enfin les noirs, viscieux ne sont  visibles que par intermitances      et viendront te voler de la vie... ";
 	this.tutorialText[3][6]="Tu pourras faire fuir ces derniers en appuyant sur la touche 'espace' ...Ce qui aura pour effet d'emmetreun rayon lumineux qui fera paniquernos chers amis pervers...";
 	this.tutorialText[3][7]="Voilà... Je te laisse te           débrouiller... Et ne cherche pas   à appeler à l'aide...              Je n'ai pas que ça à faire...";
-
+	if(Online)
+		this.tutorialDone();
+	else
+	{
+		this.tutorialed=0;
+		this.level=-1;
+	}
+	
 	this.gameOverFire=new Image();
 	this.gameOverFire.src="graphics/fire.png";
 	this.gameOverHalo=new Image();
@@ -96,6 +103,8 @@ Game.prototype.notify=function(senTemp)
 Game.prototype.update=function()
 {
 	SoundEfx.update();
+	if(this.tutorialed==undefined || this.level==undefined)
+		this.started=false;
 	if(!this.started)
 	{
 		this.start();
@@ -178,8 +187,11 @@ Game.prototype.start=function()
 	surface.textAlign = 'center';		
 	surface.font = "75px pixel";
 	surface.fillStyle = "rgb(255,255,255)";
-	surface.fillText("Level "+this.level,800/2,700/2-75);
-	if(this.level==0 || this.level==1)
+	if(this.level != undefined)
+		surface.fillText("Level "+(this.level+1),800/2,700/2-75);
+	else 	
+		surface.fillText("Level is loading...",800/2,700/2-75);	
+	if(this.level+1==0 || this.level+1==1)
 	{
 		surface.font = "60px pixel";
 		surface.fillStyle = "rgb(150,150,150)";
@@ -190,6 +202,7 @@ Game.prototype.start=function()
 	surface.fillText("-press space to start-",800/2,700/2+100-75);	
 	if(Input.equals(32))
 	{
+		this.newLevel();
 		this.started=true;
 		SoundEfx.play("select.wav",0.2,false);	
 	}
@@ -273,7 +286,11 @@ Game.prototype.tutorial=function()
 			surface.fillText(txt[i],410,60+20*i);
 		surface.globalAlpha=1;
 		if(this.tutorialOpacity<=0)
+		{
 			this.tutorialed="validated";
+			if(Online)
+				this.tutorialFinished();
+		}
 
 	}
 	
@@ -606,10 +623,11 @@ Game.prototype.gameWin=function()
 	surface.fillText("-Your score has been sent-",800/2,372);
 	if(this.scored==false)
 	{
-		this.showScore(this.level);
+		if(Online)
+			this.showScore(this.level);
 		this.scored=true;
 	}
-	if(Response != undefined && Response != "")
+	if(Online && Response != undefined && Response != "")
 	{
 	    surface.drawImage(this.boxInfo,800/2-300,392);
 		data=Response.split("///");
@@ -618,7 +636,8 @@ Game.prototype.gameWin=function()
 			if(data[i] != undefined)
 			{
 				value=data[i].split("//");
-				surface.fillText(value[0]+"  :  "+value[1],800/2-300+300/2,450+i*20);
+				if(value[0] != undefined && value[1] != undefined)
+					surface.fillText(value[0]+"  :  "+value[1],800/2-300+300/2,450+i*20);
 			}
 		}
 		surface.font = "40px pixel";
@@ -628,7 +647,8 @@ Game.prototype.gameWin=function()
 	surface.textAlign = 'start';
 	if(Input.equals(32))
 	{
-		this.sendScore(this.user,score);
+		if(Online)
+			this.sendScore(this.user,score);
 		SoundEfx.play("select.wav",0.2,false);
 		this.newLevel();	
 	}
@@ -657,7 +677,30 @@ Game.prototype.sendScore=function(userTemp,scoreTemp)
 {
 	Sender.open('GET',"http://minequest.servegame.com/Spectr/sendScore.php?user="+userTemp+"&level="+this.level+"&score="+scoreTemp,true);
 	Sender.send(null);
-	Sender.onreadystatechange=function(){}
+	Sender.onreadystatechange=function()
+	{
+		if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0) && Scene instanceof Game)
+			Scene.sendLevel(Scene.level);
+	}
+}
+
+/**
+ * Save the level online
+ **/
+Game.prototype.sendLevel=function(levelTemp)
+{
+	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+this.user+"&password="+this.password+"&op=level&args="+levelTemp,true);
+	Sender.send(null);
+	Sender.onreadystatechange=function()
+	{
+					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0) && Scene instanceof Game)
+					{
+						if(Sender.responseText==="1")
+							Scene.notify("Level saved online.");
+						else 
+							Scene.notify("Error can't save.");
+					}
+	}
 }
 
 /**
@@ -672,6 +715,68 @@ Game.prototype.showScore=function(levelTemp)
 					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0))
 						Response=Sender.responseText;				
 	}
+}
+
+/**
+ * Check if the tutorial has been do.
+ **/
+Game.prototype.tutorialDone=function()
+{
+	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+this.user+"&password="+this.password+"&op=tutorialdone",true);
+	Sender.send(null);
+	Sender.onreadystatechange=function()
+	{
+					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0) && Scene instanceof Game)
+					{
+						if(Sender.responseText==="true")
+						{
+							Scene.tutorialed="validated";
+						}
+						else
+						{
+							Scene.tutorialed=0;
+						}
+						Scene.levelDone();
+					}
+	}
+}
+
+/**
+ * Load the level saved online.
+ **/
+Game.prototype.levelDone=function()
+{
+	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+this.user+"&password="+this.password+"&op=leveldone",true);
+	Sender.send(null);
+	Sender.onreadystatechange=function()
+	{
+					if (Sender.readyState==4 && (Sender.status==200 || Sender.status==0) && Scene instanceof Game)
+					{
+						if(Sender.responseText!=="not found")
+						{
+							Scene.level=parseInt(Sender.responseText)-1;
+							Scene.notify("Last level loaded.");
+						}
+						else
+						{
+							Scene.level=-1;
+							Scene.notify("Can't load last level.");
+						}
+					}
+	}
+}
+
+
+
+/**
+ * Send to the server that player did the tutorial.
+ **/
+Game.prototype.tutorialFinished=function()
+{
+	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+this.user+"&password="+this.password+"&op=tutorial",true);
+	Sender.send(null);
+	Sender.onreadystatechange=function()
+	{}
 }
 
 
