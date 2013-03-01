@@ -200,7 +200,7 @@ Game.prototype.start=function()
 	surface.fillStyle = "rgb(255,255,255)";	
 	surface.font = "35px pixel";
 	surface.fillText("-press space to start-",800/2,700/2+100-75);	
-	if(Input.equals(32))
+	if(Input.equals(32) && this.level != undefined)
 	{
 		this.newLevel();
 		this.started=true;
@@ -401,7 +401,7 @@ Game.prototype.inputUpdate=function()
 		this.player.move("Up");
 	else if(Input.equals(32))
 		this.player.discharge();	
-	else if(Input.equals(66))
+	else if(Input.equals(66) && (this.tutorialed>=2 || this.tutorialed=="validated"))
 		this.player.changeMode();
 	else if(Input.equals(27))
 	{
@@ -594,6 +594,7 @@ Game.prototype.pause=function()
 		SoundEfx.play("select.wav",0.2,false);
 		this.level-=1;
 		this.newLevel();
+		this.started=true;
 		this.paused=false;
 		this.player.fat=25;
 	}
@@ -675,7 +676,7 @@ Game.prototype.addParticle=function(object)
  **/
 Game.prototype.sendScore=function(userTemp,scoreTemp)
 {
-	Sender.open('GET',"http://minequest.servegame.com/Spectr/sendScore.php?user="+userTemp+"&level="+this.level+"&score="+scoreTemp,true);
+	Sender.open('GET',Server+"sendScore.php?user="+userTemp+"&level="+this.level+"&score="+scoreTemp,true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{
@@ -689,7 +690,7 @@ Game.prototype.sendScore=function(userTemp,scoreTemp)
  **/
 Game.prototype.sendLevel=function(levelTemp)
 {
-	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+this.user+"&password="+this.password+"&op=level&args="+levelTemp,true);
+	Sender.open('GET',Server+"userStat.php?user="+this.user+"&password="+this.password+"&op=level&args="+levelTemp,true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{
@@ -708,7 +709,7 @@ Game.prototype.sendLevel=function(levelTemp)
  **/
 Game.prototype.showScore=function(levelTemp)
 {
-	Sender.open('GET',"http://minequest.servegame.com/Spectr/showScore.php?level="+levelTemp,true);
+	Sender.open('GET',Server+"showScore.php?level="+levelTemp,true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{
@@ -722,7 +723,7 @@ Game.prototype.showScore=function(levelTemp)
  **/
 Game.prototype.tutorialDone=function()
 {
-	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+this.user+"&password="+this.password+"&op=tutorialdone",true);
+	Sender.open('GET',Server+"userStat.php?user="+this.user+"&password="+this.password+"&op=tutorialdone",true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{
@@ -746,7 +747,7 @@ Game.prototype.tutorialDone=function()
  **/
 Game.prototype.levelDone=function()
 {
-	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+this.user+"&password="+this.password+"&op=leveldone",true);
+	Sender.open('GET',Server+"userStat.php?user="+this.user+"&password="+this.password+"&op=leveldone",true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{
@@ -773,7 +774,7 @@ Game.prototype.levelDone=function()
  **/
 Game.prototype.tutorialFinished=function()
 {
-	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+this.user+"&password="+this.password+"&op=tutorial",true);
+	Sender.open('GET',Server+"userStat.php?user="+this.user+"&password="+this.password+"&op=tutorial",true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{}

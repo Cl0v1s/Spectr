@@ -66,6 +66,10 @@ function Loader()
 	this.sources[54]="graphics/Inflate.png";	
 	this.sources[55]="graphics/littleBox.png";	
 	this.sources[56]="graphics/normalBox.png";	
+	this.sources[57]="graphics/ok.png";	
+	this.sources[58]="graphics/title.png";
+	this.sources[59]="graphics/Frame.png";	
+	this.sources[60]="graphics/input.png";		
 	this.load();
 }
 

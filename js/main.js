@@ -1,3 +1,4 @@
+var Server;
 var Start;
 var Scene;
 var prevScene;
@@ -8,6 +9,7 @@ var Response;
 var Online;
 
 window.onload = function() {
+    Server="http://chaipokoi.olympe.in/Spectr/server/";
 	Online=false;
 	canvas=document.getElementById('frame');
 	login=document.getElementById('login');

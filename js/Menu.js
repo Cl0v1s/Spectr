@@ -140,7 +140,7 @@ Menu.prototype.login=function()
 	password=document.getElementById('password').value;
 	this.user=user;
 	this.password=password;
-	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+user+"&password="+password+"&op=login",true);
+	Sender.open('GET',Server+"userStat.php?user="+user+"&password="+password+"&op=login",true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{
@@ -165,7 +165,7 @@ Menu.prototype.login=function()
  **/
 Menu.prototype.register=function(userTemp,passTemp)
 {
-	Sender.open('GET',"http://minequest.servegame.com/Spectr/userStat.php?user="+user+"&password="+password+"&op=register",true);
+	Sender.open('GET',Server+"userStat.php?user="+user+"&password="+password+"&op=register",true);
 	Sender.send(null);
 	Sender.onreadystatechange=function()
 	{
