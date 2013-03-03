@@ -1,8 +1,10 @@
-function Sound(elementTemp)
+function Sound()
 {
 	this.timer=0;
-	this.element=elementTemp;
+	this.element=new Audio();
+	this.music=new Audio();
 	this.prev=undefined;
+	this.prevMusic=undefined;
 }
 
 /**
@@ -22,10 +24,38 @@ Sound.prototype.play=function(soundTemp,volTemp,secur)
 }
 
 /**
+ * Play music
+ **/
+Sound.prototype.playMusic=function(soundTemp,volTemp)
+{
+	if(this.prevMusic != soundTemp)
+	{
+		this.music.src="music/"+soundTemp;
+		if(volTemp != undefined)
+			this.music.volume=volTemp;
+		this.music.play();
+		this.prevMusic=soundTemp;
+	}
+}
+
+/**
+ * Stop music
+ **/
+Sound.prototype.stopMusic=function()
+{
+		this.music.pause();
+}
+
+/**
  * Update the timer
  **/
 Sound.prototype.update=function()
 {
 	if(this.timer>0)
 		this.timer-=1;
+	if(this.music.currentTime>=this.music.duration)
+	{
+		this.music.currentTime=0;
+		this.music.play();
+	}
 }

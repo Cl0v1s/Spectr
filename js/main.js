@@ -7,8 +7,12 @@ var Input;
 var Sender;
 var Response;
 var Online;
+var Ready;
+
+var scrolldelay;
 
 window.onload = function() {
+	Ready=false;
     Server="http://chaipokoi.olympe.in/Spectr/server/";
 	Online=false;
 	canvas=document.getElementById('frame');
@@ -19,7 +23,7 @@ window.onload = function() {
 	Scene=new Loader();
 	Sender=new XMLHttpRequest();
 	prevScene=Scene;
-	SoundEfx=new Sound(new Audio());
+	SoundEfx=new Sound();
 	Input=new Input();
 	Interval=setInterval(function() {
 		if(prevScene != Scene)
@@ -31,9 +35,13 @@ window.onload = function() {
 	}, 20);
 }
 
+/**
+ * Switch from the connexion screen to the game
+ **/
 function start()
 {
-	Start=setInterval(function() {
+	Start=setInterval(function()
+	{
 		if(canvas.style.opacity==0.0)
 		{
 			canvas.style.opacity=0.2;
@@ -83,11 +91,29 @@ function start()
 		else
 		{
 			clearInterval(Start);
-			Scene.login();
+			Ready=true;
+			if(Scene instanceof Menu)
+				Scene.login();
 		}
 
 		
 	},20);
+}
+/**
+ * Scroll down the page to show explanations
+ **/
+function scrollDown() {
+		scrollStop();
+    	window.scrollBy(0,50); // horizontal and vertical scroll increments
+    	scrolldelay = setTimeout('scrollDown()',20); // scrolls every 100 milliseconds
+}
+function scrollUp() {
+		scrollStop();
+    	window.scrollBy(0,-50); // horizontal and vertical scroll increments
+    	scrolldelay = setTimeout('scrollUp()',20); // scrolls every 100 milliseconds
+}
+function scrollStop() {
+    	clearTimeout(scrolldelay);
 }
 
 

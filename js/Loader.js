@@ -69,7 +69,20 @@ function Loader()
 	this.sources[57]="graphics/ok.png";	
 	this.sources[58]="graphics/title.png";
 	this.sources[59]="graphics/Frame.png";	
-	this.sources[60]="graphics/input.png";		
+	this.sources[60]="graphics/input.png";	
+
+	this.sources[61]="music/Win.mp3";	
+	this.sources[62]="music/Title.wav";
+	this.sources[63]="music/Level.mp3";	
+	
+	this.sources[64]="sound/bounce.wav";	
+	this.sources[65]="sound/hurt.wav";
+	this.sources[66]="sound/bonus.wav";	
+	this.sources[67]="sound/vice.wav";	
+	this.sources[68]="sound/viceHurt.wav";
+	this.sources[69]="sound/bip.wav";	
+	this.sources[70]="sound/select.wav";	
+	
 	this.load();
 }
 
@@ -81,20 +94,31 @@ Loader.prototype.load=function()
 	var images = {};
 	var loadedImages = 0;
 	var numImages = 0;
-	for (var src in this.sources) {
+	test=function()
+	{
+		fileLoaded+=1;
+	};
+	for (var src in this.sources) 
+	{
 		numImages++;
 	}
-	for (var src in this.sources) {
-		images[src] = new Image();
-		images[src].onload = function()
-		{
-			fileLoaded+=1;
-			if (++loadedImages >= numImages)
+	for (var src in this.sources) 
+	{
+		if(this.sources[src].split(".")[1]==="png" || this.sources[src].split(".")[1]==="jpg")
+		{	
+			images[src] = new Image();
+			images[src].onload = function()
 			{
-				Scene=new Menu();
+				fileLoaded+=1;
 			}
+			images[src].src = this.sources[src];
 		}
-	images[src].src = this.sources[src];
+		else
+		{
+			images[src] = new Audio();
+			images[src].src = this.sources[src];
+			images[src].canplaythrough= test();
+		}
 	}
 }
 
@@ -114,5 +138,11 @@ Loader.prototype.update=function()
 	progress=(fileLoaded*100/this.sources.length)*2;
 	surface.fillStyle="rgb(255,255,255)";
 	surface.fillRect(800/2-100,700/2-25/2,progress,25);
+	if(fileLoaded==this.sources.length)
+	{
+		Scene=new Menu();
+		if(Ready)
+			Scene.login();
+	}
 	
 }

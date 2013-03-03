@@ -51,7 +51,7 @@ function Game(userTemp,passTemp)
 	this.tutorialText[2][7]="En jouant avec le bouton 'B'...    Arrange toi pour que le bloc       corresponde parfaitement à son     emplacement...";
 
 	this.tutorialText[3][0]="Bien... C'est presque terminé...   Enfin...";
-	this.tutorialText[3][1]="Durant la précdente partie tu as   du remarquer un petit carré de     couleur clignotant... Il s'agit    d'un bonus...En passant dessus     tu profiteras de divers            améliorations qui te faciliteront  la vie... ou plutot la mort...";
+	this.tutorialText[3][1]="Durant la précédente partie tu as  du remarquer un petit carré de     couleur clignotant... Il s'agit    d'un bonus...En passant dessus     tu profiteras de divers            améliorations qui te faciliteront  la vie... ou plutot la mort...";
 	this.tutorialText[3][2]="...";
 	this.tutorialText[3][3]="...";
 	this.tutorialText[3][4]="Ah oui... Une dernière chose...    Les places pour le paradis sont    limitées...Aussi tu subiras la     visite de certains de tes camaradesqui risqueront de gacher ton beau  travail...";
@@ -59,7 +59,7 @@ function Game(userTemp,passTemp)
 	this.tutorialText[3][6]="Tu pourras faire fuir ces derniers en appuyant sur la touche 'espace' ...Ce qui aura pour effet d'emmetreun rayon lumineux qui fera paniquernos chers amis pervers...";
 	this.tutorialText[3][7]="Voilà... Je te laisse te           débrouiller... Et ne cherche pas   à appeler à l'aide...              Je n'ai pas que ça à faire...";
 	if(Online)
-		this.tutorialDone();
+		this.levelDone();
 	else
 	{
 		this.tutorialed=0;
@@ -103,6 +103,35 @@ Game.prototype.notify=function(senTemp)
 Game.prototype.update=function()
 {
 	SoundEfx.update();
+	//notification
+	if(this.notification != false)
+	{
+		this.oldnotif=this.notification;
+			this.notificationFrame+=1;
+		if(this.notificationFrame>=80)
+		{
+			this.notification=false;
+		}
+	}
+	else if(this.notificationFrame>0)
+		this.notificationFrame-=1;
+		
+	surface.textAlign = 'center';	
+	surface.fillStyle = "rgb(50,50,50)";
+	surface.font = "30px pixel";
+	if(this.notificationFrame<40)
+	{
+		surface.drawImage(this.notif,400,-230+this.notificationFrame*1.5);
+		surface.fillText(this.oldnotif,400+300/2,this.notificationFrame*1.5-20);
+	}
+	else 
+	{
+		surface.drawImage(this.notif,400,-230+40*1.5);
+		surface.fillText(this.oldnotif,400+300/2,40*1.5-20);
+	}
+		
+	surface.textAlign = 'start';
+	
 	if(this.tutorialed==undefined || this.level==undefined)
 		this.started=false;
 	if(!this.started)
@@ -152,10 +181,10 @@ Game.prototype.update=function()
 	}
 	else
 	{
-		this.gameOver("You have lose all your lives !");
+		this.gameOver("you don't have life point !");
 		return;
 	}
-	
+	SoundEfx.playMusic("level.mp3",0.1);
 	this.inputUpdate();
 	
 	this.monsterUpdate();
@@ -184,6 +213,7 @@ Game.prototype.update=function()
 Game.prototype.start=function()
 {
 	clean();
+	SoundEfx.stopMusic();
 	surface.textAlign = 'center';		
 	surface.font = "75px pixel";
 	surface.fillStyle = "rgb(255,255,255)";
@@ -191,7 +221,7 @@ Game.prototype.start=function()
 		surface.fillText("Level "+(this.level+1),800/2,700/2-75);
 	else 	
 		surface.fillText("Level is loading...",800/2,700/2-75);	
-	if(this.level+1==0 || this.level+1==1)
+	if((this.level+1)==0 || (this.level+1)==1)
 	{
 		surface.font = "60px pixel";
 		surface.fillStyle = "rgb(150,150,150)";
@@ -456,34 +486,7 @@ Game.prototype.hudUpdate=function()
 	{
 		surface.drawImage(this.life,739,100+o*60);
 	}
-	//notification
-	if(this.notification != false)
-	{
-		this.oldnotif=this.notification;
-			this.notificationFrame+=1;
-		if(this.notificationFrame>=80)
-		{
-			this.notification=false;
-		}
-	}
-	else if(this.notificationFrame>0)
-		this.notificationFrame-=1;
-		
-	surface.textAlign = 'center';	
-	surface.fillStyle = "rgb(50,50,50)";
-	surface.font = "30px pixel";
-	if(this.notificationFrame<40)
-	{
-		surface.drawImage(this.notif,400,-230+this.notificationFrame*1.5);
-		surface.fillText(this.oldnotif,400+300/2,this.notificationFrame*1.5-20);
-	}
-	else 
-	{
-		surface.drawImage(this.notif,400,-230+40*1.5);
-		surface.fillText(this.oldnotif,400+300/2,40*1.5-20);
-	}
-		
-	surface.textAlign = 'start';
+
 }
 
 /**
@@ -575,7 +578,7 @@ Game.prototype.gameOver=function(cause)
 	
 	
 	if(Input.equals(32))
-		Scene=new Game();
+		Scene=new Menu();
 		
 }
 
@@ -613,6 +616,7 @@ Game.prototype.pause=function()
  **/
 Game.prototype.gameWin=function()
 {
+	SoundEfx.playMusic("Win.mp3",0.3);
 	time=this.timer.min*60+this.timer.sec;
 	score=Math.round((100-(time*100)/Levels[this.level][0])*this.player.life);
 	surface.font = "80px pixel";
@@ -651,7 +655,8 @@ Game.prototype.gameWin=function()
 		if(Online)
 			this.sendScore(this.user,score);
 		SoundEfx.play("select.wav",0.2,false);
-		this.newLevel();	
+		this.level-=1;
+		this.newLevel();
 	}
 }
 
@@ -736,8 +741,8 @@ Game.prototype.tutorialDone=function()
 						else
 						{
 							Scene.tutorialed=0;
+							Scene.level=-1;
 						}
-						Scene.levelDone();
 					}
 	}
 }
@@ -763,6 +768,7 @@ Game.prototype.levelDone=function()
 							Scene.level=-1;
 							Scene.notify("Can't load last level.");
 						}
+						Scene.tutorialDone();
 					}
 	}
 }

@@ -9,6 +9,7 @@ function Vice(xTemp,yTemp,dirTemp)
 	this.height=75;
 	this.eye=0;
 	this.fear=false;
+	this.bounced=false;
 	this.sprite=new Image();
 	if(dirTemp == undefined)
 		this.dir="Up";
@@ -18,7 +19,9 @@ function Vice(xTemp,yTemp,dirTemp)
 	this.dead=false;
 }
 
-
+/**
+ * Change the direction of the vice
+ **/
 Vice.prototype.turn=function()
 {
 	dirTemp=this.dir;
@@ -35,6 +38,8 @@ Vice.prototype.turn=function()
 		else 
 			dirTemp="Left";
 	}
+	if(this.fear != false)
+		this.bounced=true;
 	this.dir=dirTemp;
 }
 
@@ -90,7 +95,7 @@ Vice.prototype.updatePos=function(others)
 	if(this.velocity>3 && this.fear==false)
 		this.velocity=3;
 
-	if(this.fear != false)
+	if(this.fear != false && !this.bounced)
 	{
 		other=this.fear;
 		if(other.x>this.x)
