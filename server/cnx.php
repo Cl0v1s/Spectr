@@ -1,3 +1,3 @@
 <?php
-	$connexion=mysqli_connect("sql.olympe.in","lF9vEoLH","0662240307","lF9vEoLH");
+	$connexion=mysqli_connect("127.0.0.1","root","root","Spectr");
 ?>
